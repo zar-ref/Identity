@@ -14,7 +14,6 @@ namespace Identity.Entities.Entities
         [Key]
         public int Id { get; set; }
 
-
         public string CreateUser { get; set; }
 
         public DateTime? CreateDate { get; set; }
