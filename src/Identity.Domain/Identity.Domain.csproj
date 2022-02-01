@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.0" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Identity.Entities\Identity.Entities.csproj" />
+    <ProjectReference Include="..\Identity.Models\Identity.Models.csproj" />
   </ItemGroup>
 
 </Project>
