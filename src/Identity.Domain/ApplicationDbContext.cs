@@ -30,7 +30,7 @@ namespace Identity.Domain
         {
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(@Directory.GetCurrentDirectory() + "/appsettings.json")
+                .AddJsonFile(@Directory.GetCurrentDirectory() + "../Identity.API/appsettings.json")
                 .Build();
             var builder = new DbContextOptionsBuilder<ApplicationDbContext>(); 
             var connectionString_2 = configuration.GetConnectionString("dev_db_2"); 
@@ -39,3 +39,4 @@ namespace Identity.Domain
         }
     }
 }
+ 
