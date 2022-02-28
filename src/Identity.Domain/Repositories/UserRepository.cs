@@ -16,9 +16,9 @@ namespace Identity.Domain.Repositories
         {
             _context = context;
         }
-        public void Add(User account)
+        public async Task Add(User account)
         {
-            throw new NotImplementedException();
+            await _context.AddAsync(account);
         }
 
         public void Delete(int? id)

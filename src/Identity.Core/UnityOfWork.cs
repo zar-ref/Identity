@@ -24,7 +24,7 @@ namespace Identity.Core
         {
             return _trackChangesManager.GetLastIdInsert();
         }
-        public void Commit()
+        public async Task<int> Save()
         {
             using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new System.TimeSpan(0, 15, 0)))
             {
@@ -32,10 +32,9 @@ namespace Identity.Core
                 {
                     _trackChangesManager.DetectChanges();
                     _trackChangesManager.TrackChanges();
-                    _context.SaveChanges();
+                    int affectedRows = await _context.SaveChangesAsync().ConfigureAwait(false);
+                    return affectedRows;
 
-                    //should be assincronous operation 
-                    scope.Complete();
 
                 }
                 catch (Exception)

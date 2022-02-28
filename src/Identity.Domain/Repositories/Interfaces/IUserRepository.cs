@@ -10,7 +10,7 @@ namespace Identity.Domain.Repositories.Interfaces
     public interface IUserRepository
     {
 
-        void Add(User account);
+        Task Add(User account);
         void Delete(int? id);
     }
 }

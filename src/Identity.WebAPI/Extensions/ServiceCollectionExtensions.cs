@@ -1,4 +1,5 @@
 ﻿using Identity.Core;
+using Identity.Core.Services;
 using System.Data;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.Entity.Core.Objects;
@@ -8,7 +9,13 @@ namespace Identity.WebAPI.Extensions
     public static class ServiceCollectionExtensions
     {
 
-        public static IServiceCollection AddRepositoriees(this IServiceCollection services, IConfigurationSection connectionStrings)
+        public static IServiceCollection AddServices(this IServiceCollection services)
+        {
+            return services
+                .AddScoped<IUserService, UserService>();
+        }
+
+        public static IServiceCollection AddRepositories(this IServiceCollection services, IConfigurationSection connectionStrings)
         {
             return services
                 .AddScoped<IDbConnection>(_serviceProvider =>

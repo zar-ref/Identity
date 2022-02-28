@@ -1,4 +1,6 @@
-﻿namespace Identity.WebAPI
+﻿using Identity.WebAPI.Extensions;
+
+namespace Identity.WebAPI
 {
     public sealed class Startup
     {
@@ -10,6 +12,8 @@
         public void ConfigureServices (IServiceCollection services)
         {
             services.AddHttpContextAccessor();
+            services.AddServices();
+            services.AddRepositories(this.Configuration.GetSection("ConnectionStrings"));
         }
     }
 }

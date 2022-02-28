@@ -10,7 +10,15 @@ namespace Identity.Core.Services
     {
 
         protected IUnityOfWork _unitOfWork;
+        protected IUnityOfWork GetUnitOfWorkInstance()
+        {
+            return _unitOfWork;
+        }
 
-
+        protected async void CommitTransaction()
+        {
+ 
+            await _unitOfWork.Save();
+        }
     }
 }

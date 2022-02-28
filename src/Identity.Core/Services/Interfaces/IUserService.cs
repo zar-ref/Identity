@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Identity.DTO;
 namespace Identity.Core.Services
 {
-    internal class IUserService
+    public interface IUserService
     {
+
+
+        Task AddUser(SignInUserDTO user);
     }
 }
