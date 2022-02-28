@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json; 
 using System.IO;
-
+using System.Data.Entity;
 namespace Identity.Domain
 {
 
