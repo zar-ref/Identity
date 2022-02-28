@@ -1,4 +1,6 @@
-﻿using Identity.Entities.Entities.Interfaces;
+﻿using Identity.Domain;
+using Identity.Entities.Entities.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -6,7 +8,8 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-namespace Identity.Domain
+
+namespace Identity.Core
 {
     public class TrackChangesManager
     {
@@ -16,9 +19,13 @@ namespace Identity.Domain
         private List<Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> _deletedEntities;
         private ApplicationDbContext _context;
 
-        private IIdentity _identity; //this should be context accessor...
+       private ContextAccessor _contextAccessor { get; set; }
 
-
+        public TrackChangesManager(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context )
+        {
+            _contextAccessor = new ContextAccessor( httpContextAccessor);
+            _context = context;
+        }
         private void Track(List<Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> changeEntityList)
         {
             changeEntityList.ForEach(item =>
@@ -29,12 +36,12 @@ namespace Identity.Domain
                 if (entity.Id > 0)
                 {
                     entity.ModifyDate = DateTime.Now;
-                    entity.ModifyUser = _identity?.Name;
+                    entity.ModifyUser = _contextAccessor.GetUser();
                 }
                 // insert operation
                 else
                 {
-                    entity.CreateUser = _identity?.Name;
+                    entity.CreateUser = _contextAccessor.GetUser();
                     entity.CreateDate = DateTime.Now;
                 }
             });

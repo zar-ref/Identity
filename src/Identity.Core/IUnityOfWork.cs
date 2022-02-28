@@ -1,10 +1,13 @@
 ﻿using System;
 
-/// <summary>
-/// Summary description for Class1
-/// </summary>
-public interface IUnityOfWork: IDisposable
+
+
+namespace Identity.Core
 {
-	void Commit();
-	int GetLastIdInsert();
+    public interface IUnityOfWork : IDisposable
+    {
+        void Commit();
+        int GetLastIdInsert();
+    }
 }
+

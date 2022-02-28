@@ -1,60 +1,67 @@
-﻿using Identity.Domain;
+﻿using Identity.Core;
+using Identity.Domain;
 using Identity.Domain.Repositories;
 using Identity.Domain.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Transactions;
 
-public class UnityOfWork : IUnityOfWork
+namespace Identity.Core
 {
-    private TrackChangesManager _trackChangesManager;
-    private bool _disposed;
-    private ApplicationDbContext _context;
-    public IUserRepository UserRepository { get { return new UserRepository(_context); } }
-    public UnityOfWork()
+    public class UnityOfWork : IUnityOfWork
     {
-
-    }
-
-    public int GetLastIdInsert()
-    {
-        return _trackChangesManager.GetLastIdInsert();
-    }
-    public void Commit()
-    {
-        using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new System.TimeSpan(0, 15, 0)))
+        private TrackChangesManager _trackChangesManager;
+        private bool _disposed;
+        private ApplicationDbContext _context;
+        public IUserRepository UserRepository { get { return new UserRepository(_context); } }
+        public UnityOfWork(IHttpContextAccessor httpContextAccessor)
         {
-            try
-            {
-                _trackChangesManager.DetectChanges();
-                _trackChangesManager.TrackChanges();
-                _context.SaveChanges();
+            _context = new ApplicationDbContext(new Microsoft.EntityFrameworkCore.DbContextOptions<ApplicationDbContext>());
+            _trackChangesManager = new TrackChangesManager(httpContextAccessor, _context);
+        }
 
-                //should be assincronous operation 
-                scope.Complete();
-
-            }
-            catch (Exception)
+        public int GetLastIdInsert()
+        {
+            return _trackChangesManager.GetLastIdInsert();
+        }
+        public void Commit()
+        {
+            using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new System.TimeSpan(0, 15, 0)))
             {
-                throw;
+                try
+                {
+                    _trackChangesManager.DetectChanges();
+                    _trackChangesManager.TrackChanges();
+                    _context.SaveChanges();
+
+                    //should be assincronous operation 
+                    scope.Complete();
+
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
         }
-    }
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed)
+        protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!_disposed)
             {
-                _context.Dispose();
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
             }
+            _disposed = true;
         }
-        _disposed = true;
-    }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }
+
