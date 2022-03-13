@@ -1,15 +1,13 @@
-﻿using Identity.Domain;
-using Identity.Entities.Entities.Interfaces;
+﻿using Identity.Entities.Entities.Interfaces;
+using Identity.Infrastructure.DataAccess.DbContexts;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Core
+namespace Identity.Infrastructure.DataAccess
 {
     public class TrackChangesManager
     {
@@ -17,14 +15,14 @@ namespace Identity.Core
         private List<Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> _addedEntities;
         private List<Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> _updateEntities;
         private List<Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> _deletedEntities;
-        private ApplicationDbContext _context;
+        private readonly ICollection<BaseContext> _dbContexts;
 
-       private ContextAccessor _contextAccessor { get; set; }
+        private ContextAccessor _contextAccessor { get; set; }
 
-        public TrackChangesManager(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context )
+        public TrackChangesManager(IHttpContextAccessor httpContextAccessor, ICollection<BaseContext> dbContexts)
         {
-            _contextAccessor = new ContextAccessor( httpContextAccessor);
-            _context = context;
+            _contextAccessor = new ContextAccessor(httpContextAccessor);
+            _dbContexts = dbContexts;
         }
         private void Track(List<Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> changeEntityList)
         {
@@ -54,13 +52,13 @@ namespace Identity.Core
             Track(_deletedEntities);
         }
 
-        public void DetectChanges()
+        public void DetectChanges(string contextName)
         {
-            _updateEntities = _context.ChangeTracker.Entries()
+            _updateEntities = _dbContexts.FirstOrDefault(_ctx => _ctx.ContextName == contextName ).ChangeTracker.Entries()
                   .Where(t => t.State == Microsoft.EntityFrameworkCore.EntityState.Modified).ToList();
-            _addedEntities = _context.ChangeTracker.Entries()
+            _addedEntities = _dbContexts.FirstOrDefault(_ctx => _ctx.ContextName == contextName).ChangeTracker.Entries()
                  .Where(t => t.State == Microsoft.EntityFrameworkCore.EntityState.Added).ToList();
-            _deletedEntities = _context.ChangeTracker.Entries()
+            _deletedEntities = _dbContexts.FirstOrDefault(_ctx => _ctx.ContextName == contextName).ChangeTracker.Entries()
                  .Where(t => t.State == Microsoft.EntityFrameworkCore.EntityState.Deleted).ToList();
 
             // change state SOFT DELETE

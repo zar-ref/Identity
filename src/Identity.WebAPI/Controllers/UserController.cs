@@ -22,7 +22,8 @@ namespace Identity.WebAPI.Controllers
         {
             try
             {
-                await _userService.AddUser(userDTO);
+                HttpContext.Items.Add("ApplicationId", userDTO.ApllicationId);
+                await _userService.AddUser(userDTO.ApllicationId, userDTO);
             }
             catch (Exception ex)
             {

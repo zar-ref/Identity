@@ -1,19 +1,15 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Core
+namespace Identity.Infrastructure.DataAccess
 {
-    public class ContextAccessor
+    public class ContextAccessor : IContextAccessor
     {
-
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IHostingEnvironment _environment;
-
         public ContextAccessor(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -24,10 +20,11 @@ namespace Identity.Core
             return (string)_httpContextAccessor.HttpContext.Items["User"];
         }
 
-        public int GetApplicationType()
+        public int GetApplicationId()
         {
-            return (int)_httpContextAccessor.HttpContext.Items["ApplicationType"];
+            return (int)_httpContextAccessor.HttpContext.Items["ApplicationId"];
         }
 
+       
     }
 }

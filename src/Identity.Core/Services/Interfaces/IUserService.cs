@@ -10,6 +10,6 @@ namespace Identity.Core.Services
     {
 
 
-        Task AddUser(SignInUserDTO user);
+        Task AddUser(int applicationId , SignInUserDTO user);
     }
 }

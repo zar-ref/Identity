@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Identity.Domain.Repositories.Interfaces
+namespace Identity.Domain.Repositories
 {
     public interface IUserRepository
     {
-
-        Task Add(User account);
+        Task Add(string contextName, User account);
         void Delete(int? id);
     }
 }

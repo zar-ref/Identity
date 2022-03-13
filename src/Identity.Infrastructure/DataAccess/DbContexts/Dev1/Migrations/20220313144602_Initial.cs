@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Identity.Domain.Migrations
+namespace Identity.Infrastructure.Migrations
 {
     public partial class Initial : Migration
     {
@@ -17,9 +17,9 @@ namespace Identity.Domain.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Active = table.Column<bool>(type: "bit", nullable: false),
-                    CreateUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifyUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ModifyUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifyDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: true),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -45,9 +45,9 @@ namespace Identity.Domain.Migrations
                     InactiveDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ApllicationId = table.Column<int>(type: "int", nullable: false),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),
-                    CreateUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifyUser = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ModifyUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifyDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: true),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)

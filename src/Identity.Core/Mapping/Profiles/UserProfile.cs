@@ -1,15 +1,14 @@
-﻿using System;
+﻿using AutoMapper;
+using Identity.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AutoMapper;
-using Identity.Entities.Entities;
-using Identity.Models.Entities;
-using Identity.DTO;
-namespace Identity.Domain.Profiles
+
+namespace Identity.Core.Mapping.Profiles
 {
-    public class UserProfile: Profile
+    public class UserProfile : Profile
     {
         public UserProfile()
         {

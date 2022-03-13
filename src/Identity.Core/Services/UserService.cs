@@ -1,6 +1,7 @@
-﻿using Identity.Domain;
+﻿using Identity.Core.Mapping;
 using Identity.DTO;
 using Identity.Entities.Entities;
+using Identity.Infrastructure.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +16,15 @@ namespace Identity.Core.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task AddUser(SignInUserDTO userDTO)
+        public async Task AddUser(int applicationId, SignInUserDTO userDTO)
         {
+            var contextName = GetContextNameFromApplicationId(applicationId);
             using (var unitOfWork = GetUnitOfWorkInstance())
             {
-                var userModel = DomainBootsrapperMapper.Mapper.Map<Models.Entities.User>(userDTO);
-                var userEntity = DomainBootsrapperMapper.Mapper.Map<User>(userModel);
-                await unitOfWork.UserRepository.Add(userEntity);
-                await unitOfWork.Save();
+                var userModel = CoreMapper.Mapper.Map<Models.Entities.User>(userDTO);
+                var userEntity = CoreMapper.Mapper.Map<User>(userModel);
+                await unitOfWork.UserRepository.Add( contextName , userEntity);
+                await unitOfWork.Save(contextName);
             }
         }
     }

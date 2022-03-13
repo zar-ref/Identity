@@ -1,15 +1,16 @@
-﻿using System;
+﻿using AutoMapper;
+using Identity.Core.Mapping.Profiles;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AutoMapper;
-using Identity.Domain.Profiles;
 
-namespace Identity.Domain
+namespace Identity.Core.Mapping
 {
-    public static class DomainBootsrapperMapper
+    public static class CoreMapper
     {
+
         public static readonly Lazy<IMapper> LazyMapper = new Lazy<IMapper>(() =>
         {
             var configuration = new MapperConfiguration(cfg =>
