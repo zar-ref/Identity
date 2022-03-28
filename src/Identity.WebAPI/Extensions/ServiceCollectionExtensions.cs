@@ -18,7 +18,7 @@ namespace Identity.WebAPI.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             return services
-                .AddSingleton<IUserService, UserService>();
+                .AddScoped<IUserService, UserService>();
         }
 
         public static IServiceCollection AddRepositories(this IServiceCollection services, IConfigurationSection connectionStrings)

@@ -11,9 +11,9 @@ using System.Transactions;
 
 namespace Identity.Infrastructure.DataAccess
 {
-    public class UnityOfWork: IUnityOfWork
+    public class UnityOfWork : IUnityOfWork
     {
-        private TrackChangesManager _trackChangesManager; 
+        private TrackChangesManager _trackChangesManager;
         public IUserRepository UserRepository { get { return new UserRepository(_dbContexts); } }
 
         private readonly ICollection<BaseContext> _dbContexts;
@@ -25,7 +25,7 @@ namespace Identity.Infrastructure.DataAccess
             {-1 , "Dev1" },
         };
 
-       
+
         public UnityOfWork(ICollection<BaseContext> dbContexts, IHttpContextAccessor httpContextAccessor)
         {
             _dbContexts = dbContexts;
@@ -69,10 +69,10 @@ namespace Identity.Infrastructure.DataAccess
 
         }
 
-        public void Dispose()
+        public async void Dispose()
         {
             var contextName = ContextNamesByApplicationIdDictionary[_contextAccessor.GetApplicationId()];
-            _dbContexts.FirstOrDefault(_ctx => _ctx.ContextName == contextName).Dispose();
+            await _dbContexts.FirstOrDefault(_ctx => _ctx.ContextName == contextName).DisposeAsync().ConfigureAwait(false);
             GC.SuppressFinalize(this);
         }
     }
