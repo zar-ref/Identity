@@ -5,6 +5,7 @@ using Identity.Core.Services;
 using Identity.Infrastructure.DataAccess;
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
+using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Data.Entity.Core.EntityClient;
@@ -17,39 +18,22 @@ namespace Identity.WebAPI.Extensions
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            return services
+            return services  
                 .AddScoped<IUserService, UserService>();
         }
 
-        public static IServiceCollection AddRepositories(this IServiceCollection services, IConfigurationSection connectionStrings)
+        public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration config)
         {
+
             return services
-                .AddScoped<IDbConnection>(_serviceProvider =>
-                {
-                    var contextAccessor = _serviceProvider.GetRequiredService<IContextAccessor>();
-                    var context = new ObjectContext(connectionStrings[$"dev_db_{contextAccessor.GetApplicationId()}"]);
-                    return ((EntityConnection)context.Connection).StoreConnection;
-                })
-                 .AddScoped(_serviceProvider =>
-                 {
-                     var contextAccessor = _serviceProvider.GetRequiredService<IContextAccessor>();
-                     var context = new ObjectContext(connectionStrings[$"dev_db_{contextAccessor.GetApplicationId()}"]);
-                     context.ContextOptions.LazyLoadingEnabled = true;
-                     return context;
-                 })
-                 .AddScoped<IUnityOfWork, UnityOfWork>();
+                .AddDbContext<Dev1Context>(options => options.UseSqlServer(config.GetValue<string>("DevelopmentConnectionStrings:dev_db_1")))
+                .AddDbContext<Dev2Context>(options => options.UseSqlServer(config.GetValue<string>("DevelopmentConnectionStrings:dev_db_2")))
+                .AddHttpContextAccessor()
+                .AddSingleton<IContextAccessor, ContextAccessor>()
+                .AddScoped<IUnityOfWork, UnityOfWork>();
         }
+     
 
-        //public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfigurationSection connectionStrings)
-        //{
-        //    services.AddDbContext<Dev1Context>(options => options.UseSqlServer(connectionStrings.AsEnumerable().FirstOrDefault(_conn => _conn.Value == "dev_db_1").Value));
-            
-        //    var builder = new ContainerBuilder();
 
-        //    builder.RegisterType<Dev1Context>().As<BaseContext>();
-
-        //    builder.Populate(services);
-        //    return new AutofacServiceProvider(builder.Build());
-        //}
     }
 }
