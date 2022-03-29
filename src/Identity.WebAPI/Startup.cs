@@ -48,6 +48,7 @@ namespace Identity.WebAPI
 
             }
 
+
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
