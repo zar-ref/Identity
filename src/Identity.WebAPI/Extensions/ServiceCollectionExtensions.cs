@@ -2,11 +2,16 @@
 using Autofac.Extensions.DependencyInjection;
 using Identity.Core;
 using Identity.Core.Services;
+using Identity.Core.Services.Interfaces;
+using Identity.Entities.Entities.Identity;
 using Identity.Infrastructure.DataAccess;
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.Entity.Core.Objects;
@@ -18,8 +23,9 @@ namespace Identity.WebAPI.Extensions
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            return services  
-                .AddScoped<IUserService, UserService>();
+            return services
+                .AddScoped<IUserService, UserService>()
+                .AddScoped<IAccountService, AccountService>();
         }
 
         public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration config)
@@ -32,8 +38,7 @@ namespace Identity.WebAPI.Extensions
                 .AddSingleton<IContextAccessor, ContextAccessor>()
                 .AddScoped<IUnityOfWork, UnityOfWork>();
         }
-     
-
+      
 
     }
 }

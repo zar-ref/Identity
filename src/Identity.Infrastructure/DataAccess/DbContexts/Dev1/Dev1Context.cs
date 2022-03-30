@@ -6,13 +6,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Identity.Entities.Entities.Identity;
 
 namespace Identity.Infrastructure.DataAccess.DbContexts.Dev1
 {
     public class Dev1Context : BaseContext
     {
+        
 
-        public Dev1Context(DbContextOptions<Dev1Context> options) : base(options)
+        public Dev1Context(DbContextOptions<Dev1Context> options ) : base(options)
         {
             ContextName = "Dev1";
         }

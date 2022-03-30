@@ -26,7 +26,8 @@ namespace Identity.Infrastructure.DataAccess
         }
         private void Track(List<Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry> changeEntityList)
         {
-            changeEntityList.ForEach(item =>
+ 
+            changeEntityList.Where(_entity => _entity is IBaseEntity).ToList().ForEach(item =>
             {
                 IBaseEntity entity = item.Entity as IBaseEntity;
 
@@ -61,8 +62,11 @@ namespace Identity.Infrastructure.DataAccess
             _deletedEntities = _dbContexts.FirstOrDefault(_ctx => _ctx.ContextName == contextName).ChangeTracker.Entries()
                  .Where(t => t.State == Microsoft.EntityFrameworkCore.EntityState.Deleted).ToList();
 
+            if(_deletedEntities.Any())
+               
+
             // change state SOFT DELETE
-            _deletedEntities.ForEach(d =>
+            _deletedEntities.Where(_deletedEntity => _deletedEntity is IBaseEntity).ToList().ForEach(d =>
             {
                 d.State = Microsoft.EntityFrameworkCore.EntityState.Unchanged;
                 IBaseEntity entity = d.Entity as IBaseEntity;
@@ -74,6 +78,8 @@ namespace Identity.Infrastructure.DataAccess
         {
             int ret = -1;
             var item = _addedEntities.LastOrDefault();
+            if (item is not IBaseEntity)
+                return ret;
             if (item != null)
                 ret = ((IBaseEntity)item.Entity).Id;
 

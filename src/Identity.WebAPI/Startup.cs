@@ -1,14 +1,19 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Identity.Core;
+using Identity.Entities.Entities.Identity;
 using Identity.Infrastructure.DataAccess;
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
 using Identity.WebAPI.Configurations;
 using Identity.WebAPI.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace Identity.WebAPI
 {
@@ -23,6 +28,29 @@ namespace Identity.WebAPI
         {
        
             services.AddDbContexts(Configuration);
+            services
+                .AddIdentity<Account, IdentityRole<int>>()
+                .AddEntityFrameworkStores<Dev1Context>()
+                .AddEntityFrameworkStores<Dev2Context>()
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication(_options =>
+            {
+                _options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                _options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                _options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                    };
+                }); ;
+
             services.AddServices();
             services.AddControllers();
             services.AddAuthorization();
@@ -53,7 +81,7 @@ namespace Identity.WebAPI
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
-
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
