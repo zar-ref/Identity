@@ -2,6 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using Identity.Core;
 using Identity.Core.Services;
+using Identity.Core.Services.Constants;
 using Identity.Core.Services.Interfaces;
 using Identity.Entities.Entities.Identity;
 using Identity.Infrastructure.DataAccess;
@@ -27,7 +28,17 @@ namespace Identity.WebAPI.Extensions
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IAccountService, AccountService>();
         }
+        public static IServiceCollection AddContantsServices(this IServiceCollection services)
+        {
+            return services
+                .AddScoped<ConstantsFactory>()
+                    .AddScoped<BaseConstantsService>()
+                    .AddScoped<IBaseContantsService, BaseConstantsService>(s => s.GetService<BaseConstantsService>())
+                    .AddScoped<Dev2ContantsService>()
+                    .AddScoped<IBaseContantsService, Dev2ContantsService>(s => s.GetService<Dev2ContantsService>());
 
+
+        }
         public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration config)
         {
 

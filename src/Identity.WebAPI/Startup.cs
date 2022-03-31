@@ -1,8 +1,9 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Identity.Core;
+using Identity.Core.DatabaseSeed;
 using Identity.Entities.Entities.Identity;
-using Identity.Infrastructure.DataAccess;
+using Identity.Infrastructure.DataAccess; 
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
@@ -50,7 +51,7 @@ namespace Identity.WebAPI
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                     };
                 }); ;
-
+            services.AddContantsServices();
             services.AddServices();
             services.AddControllers();
             services.AddAuthorization();
@@ -86,6 +87,8 @@ namespace Identity.WebAPI
             {
                 endpoints.MapControllers();
             });            
+
+            IdentitySeed.Initialize(app.ApplicationServices);
 
         }
 

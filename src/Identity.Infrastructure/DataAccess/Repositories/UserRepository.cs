@@ -33,6 +33,7 @@ namespace Identity.Infrastructure.DataAccess.Repositories
             var result = await _dbContexts.FirstOrDefault(_ctx => _ctx.ContextName == contextName).UserManager.CreateAsync(account, password);
             if (!result.Succeeded)
                 return false;
+             
             return true;
         }
 
