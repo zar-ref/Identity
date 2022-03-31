@@ -1,4 +1,5 @@
 ﻿using Identity.Entities.Entities;
+using Identity.Entities.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace Identity.Domain.Repositories
     {
         Task Add(string contextName, User account);
         void Delete(int? id);
+
+        Task<bool> AddAccount(string contextName, Account account, string password); 
     }
 }

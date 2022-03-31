@@ -1,13 +1,17 @@
 ﻿using Identity.Domain.Repositories;
+using Identity.Entities.Entities.Identity;
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.Repositories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using Microsoft.AspNet.Identity;
 
 namespace Identity.Infrastructure.DataAccess
 {
@@ -32,6 +36,7 @@ namespace Identity.Infrastructure.DataAccess
             _trackChangesManager = new TrackChangesManager(httpContextAccessor, dbContexts);
             _contextAccessor = new ContextAccessor(httpContextAccessor);
             ConstructDbContextDictionary(dbContexts);
+            ConstructDbContextIdentityManagers(dbContexts);
         }
 
 
@@ -66,6 +71,20 @@ namespace Identity.Infrastructure.DataAccess
         {
             foreach (var context in dbContexts)
                 DbContextByContextNameDictionary.Add(context.ContextName, context);
+
+        }
+
+        private void ConstructDbContextIdentityManagers(ICollection<BaseContext> dbContexts)
+        {
+            foreach (var context in dbContexts)
+            {
+                var um    = new UserStore<Account, IdentityRole<int>, BaseContext , int>(context) ; 
+                var um2 = new Microsoft.AspNetCore.Identity.UserManager<Account>(um , null , new PasswordHasher<Account>(), null, null , null , null, null, null);
+
+                var rm = new RoleStore<IdentityRole<int> , BaseContext, int>(context);
+                context.UserManager = um2;
+                context.RoleManager = new Microsoft.AspNetCore.Identity.RoleManager<IdentityRole<int>>(rm , null, null, null, null);
+            }
 
         }
 
