@@ -7,6 +7,7 @@ using Identity.Infrastructure.DataAccess;
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
+using Identity.Infrastructure.WebSocket.Client;
 using Identity.Infrastructure.WebSocketIO.Client;
 using Identity.WebAPI.Configurations;
 using Identity.WebAPI.Extensions;
@@ -90,7 +91,7 @@ namespace Identity.WebAPI
             });            
 
             IdentitySeed.Initialize(app.ApplicationServices);
-            WsClient.Init();
+            _ = WsPromoteItClient.Instance;
         }
 
     }
