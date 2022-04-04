@@ -202,6 +202,15 @@ namespace Identity.Infrastructure.WebSocket.Client
                     OnSendError.Invoke(ex);
             }
         }
+
+
+
+        public void Send(SocketMessageDTO socketMessage)
+        {
+            Send(socketMessage.WriteToJson());
+        }
+
+
         #endregion
 
         /// <summary>

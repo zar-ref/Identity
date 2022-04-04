@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Identity.DTO.WebSocketModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,15 @@ namespace Identity.Infrastructure.WebSocket.Client
         {
             Client = new WsClient();
 
-            Client.Connect("127.0.0.1", 7788);
+            Client.Connect("127.0.0.1", 7788); 
+
+            //Send Ack saying we are the master application socket
+            Client.Send(new SocketMessageDTO()
+            {
+                MessageType = "ACK",
+                CustomerType = "zarref"
+
+            });
         }
 
     }

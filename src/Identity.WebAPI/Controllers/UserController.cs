@@ -3,6 +3,7 @@ using Identity.DTO;
 using Identity.Core.Services;
 using Identity.Infrastructure.WebSocket;
 using Identity.Infrastructure.WebSocket.Client;
+using Identity.DTO.WebSocketModels;
 
 namespace Identity.WebAPI.Controllers
 {
@@ -24,7 +25,7 @@ namespace Identity.WebAPI.Controllers
         {
             try
             {
-                WsPromoteItClient.Instance.Client.Send(" ");
+
                 HttpContext.Items.Add("ApplicationId", userDTO.ApllicationId);
                 await _userService.AddUser(userDTO.ApllicationId, userDTO);
             }
