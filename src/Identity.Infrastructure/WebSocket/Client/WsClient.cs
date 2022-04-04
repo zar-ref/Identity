@@ -41,6 +41,13 @@ namespace Identity.Infrastructure.WebSocket.Client
         public void Connect(string ipaddress, int port)
         {
             Connect(new IPEndPoint(IPAddress.Parse(ipaddress), port));
+            //Send Ack saying we are the master application socket
+            Send(new SocketMessageDTO()
+            {
+                MessageType = "ACK",
+                CustomerType = "zarref"
+
+            });
         }
 
         /// <summary>

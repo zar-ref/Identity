@@ -30,13 +30,7 @@ namespace Identity.Infrastructure.WebSocket.Client
 
             Client.Connect("127.0.0.1", 7788); 
 
-            //Send Ack saying we are the master application socket
-            Client.Send(new SocketMessageDTO()
-            {
-                MessageType = "ACK",
-                CustomerType = "zarref"
-
-            });
+            
         }
 
     }
