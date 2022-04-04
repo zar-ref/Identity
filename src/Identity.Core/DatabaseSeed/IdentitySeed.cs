@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 
 namespace Identity.Core.DatabaseSeed
 {
-    public class IdentitySeed
+    //should be done on web api instead of core because of project dependencies
+    public class IdentitySeed 
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
