@@ -3,12 +3,11 @@ using Autofac.Extensions.DependencyInjection;
 using Identity.Core;
 using Identity.Core.DatabaseSeed;
 using Identity.Entities.Entities.Identity;
-using Identity.Infrastructure.DataAccess; 
+using Identity.Infrastructure.DataAccess;
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
-using Identity.Infrastructure.WebSocket.Client;
-using Identity.Infrastructure.WebSocketIO.Client;
+using Identity.Infrastructure.WebSocket.Client; 
 using Identity.WebAPI.Configurations;
 using Identity.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -27,9 +26,9 @@ namespace Identity.WebAPI
 
         private IConfiguration Configuration { get; }
 
-        public void ConfigureServices (IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-       
+
             services.AddDbContexts(Configuration);
             services
                 .AddIdentity<Account, IdentityRole<int>>()
@@ -65,13 +64,13 @@ namespace Identity.WebAPI
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
-        { 
+        {
 
             builder.RegisterModule(new DbContextsModule());
         }
 
-        public  void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        { 
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
@@ -79,7 +78,7 @@ namespace Identity.WebAPI
 
             }
 
-            
+
 
             app.UseHttpsRedirection();
             app.UseRouting();
@@ -88,10 +87,10 @@ namespace Identity.WebAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });            
+            });
 
             IdentitySeed.Initialize(app.ApplicationServices);
-            _ = WsPromoteItClient.Instance;
+            //WsManager.Instance.Init(Configuration.GetSection("JWT"));
         }
 
     }
