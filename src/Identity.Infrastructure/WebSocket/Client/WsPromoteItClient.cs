@@ -24,6 +24,11 @@ namespace Identity.Infrastructure.WebSocket.Client
 
 
         public  WsClient Client { get; set; }
+
+        public WsPromoteItClient(string ip, int port)
+        {
+
+        }
         public WsPromoteItClient()
         {
             Client = new WsClient();

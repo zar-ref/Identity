@@ -36,6 +36,7 @@ namespace Identity.WebAPI
                 .AddEntityFrameworkStores<Dev2Context>()
                 .AddDefaultTokenProviders();
 
+            WsManager.Instance.Init(Configuration);
             services.AddAuthentication(_options =>
             {
                 _options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -60,7 +61,6 @@ namespace Identity.WebAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Identity", Version = "v1" });
             });
-
         }
 
         public void ConfigureContainer(ContainerBuilder builder)

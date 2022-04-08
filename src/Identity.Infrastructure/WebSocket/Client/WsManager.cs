@@ -1,5 +1,5 @@
 ﻿using Identity.Models.Configuration;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration; 
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -33,12 +33,14 @@ namespace Identity.Infrastructure.WebSocket.Client
         public WsManager() { }
         
        
-        public void Init(string config)
+        public void Init(IConfiguration config)
         {
-
-
-            var test = JsonConvert.DeserializeObject<List<WebSocketServerSetting>>(config);
-
+     
+            var webSocketServers = config.GetSection("WebSocketServers").Get<WebSocketServerSetting[]>();
+            foreach (var webSocketServer in webSocketServers)
+            {
+                WsPromoteItClient socketClient = new WsPromoteItClient
+            } 
         }
     }
 }
