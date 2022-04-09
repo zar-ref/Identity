@@ -1,4 +1,5 @@
-﻿using Identity.Models.Configuration;
+﻿using Identity.DTO.WebSocketModels;
+using Identity.Models.Configuration;
 using Microsoft.Extensions.Configuration; 
 using Newtonsoft.Json;
 using System;
@@ -26,7 +27,7 @@ namespace Identity.Infrastructure.WebSocket.Client
         }
 
 
-        public Dictionary<WsPromoteItClient, List<string>> ContextNamesByWobSocketClient { get; set; } = new Dictionary<WsPromoteItClient, List<string>>();
+        public Dictionary<WsPromoteItClient, List<string>> ContextNamesByWebSocketClient { get; set; } = new Dictionary<WsPromoteItClient, List<string>>();
 
 
 
@@ -36,11 +37,24 @@ namespace Identity.Infrastructure.WebSocket.Client
         public void Init(IConfiguration config)
         {
      
-            var webSocketServers = config.GetSection("WebSocketServers").Get<WebSocketServerSetting[]>();
-            foreach (var webSocketServer in webSocketServers)
+            var webSocketServerConfigurations = config.GetSection("WebSocketServers").Get<WebSocketServerSetting[]>();
+            foreach (var webSocketServerconfig in webSocketServerConfigurations)
             {
-                WsPromoteItClient socketClient = new WsPromoteItClient
+                WsPromoteItClient socketClient = new WsPromoteItClient(webSocketServerconfig.IP,webSocketServerconfig.Port);
+                ContextNamesByWebSocketClient.Add(socketClient, webSocketServerconfig.Contexts);
             } 
+        }
+
+        public void BroadcastMessage(string context, SocketMessageDTO message)
+        {
+            foreach (var socketClient in ContextNamesByWebSocketClient)
+            {
+                if(socketClient.Value.Any(_ctx => _ctx== context))
+                {
+                    socketClient.Key.Client.Send(message);
+                    return;
+                }
+            }
         }
     }
 }

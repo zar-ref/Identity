@@ -9,26 +9,10 @@ namespace Identity.Infrastructure.WebSocket.Client
 {
     public class WsPromoteItClient
     {
-        private static WsPromoteItClient instance = null;
-        public static WsPromoteItClient Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new WsPromoteItClient();
-                }
-                return instance;
-            }
-        }
-
-
+      
         public  WsClient Client { get; set; }
 
-        public WsPromoteItClient(string ip, int port)
-        {
-
-        }
+     
         public WsPromoteItClient()
         {
             Client = new WsClient();
@@ -37,6 +21,11 @@ namespace Identity.Infrastructure.WebSocket.Client
 
             
         }
+        public WsPromoteItClient(string ip, int port)
+        {
+            Client = new WsClient();
 
+            Client.Connect(ip, port);
+        }
     }
 }
