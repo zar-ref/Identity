@@ -69,7 +69,7 @@ namespace Identity.WebAPI
             builder.RegisterModule(new DbContextsModule());
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public  async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -89,8 +89,7 @@ namespace Identity.WebAPI
                 endpoints.MapControllers();
             });
 
-            IdentitySeed.Initialize(app.ApplicationServices);
-            //WsManager.Instance.Init(Configuration.GetSection("JWT"));
+           await IdentitySeed.Initialize(app.ApplicationServices); 
         }
 
     }

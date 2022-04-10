@@ -11,16 +11,6 @@ namespace Identity.Infrastructure.WebSocket.Client
     {
       
         public  WsClient Client { get; set; }
-
-     
-        public WsPromoteItClient()
-        {
-            Client = new WsClient();
-
-            Client.Connect("127.0.0.1", 7788); 
-
-            
-        }
         public WsPromoteItClient(string ip, int port)
         {
             Client = new WsClient();
