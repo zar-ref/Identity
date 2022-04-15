@@ -14,7 +14,7 @@ namespace Identity.Entities.Entities.Identity
         [Column(TypeName = "nvarchar(50)")]
         public string ApplicationCode { get; set; }
 
-        public virtual ICollection<IdentityRole<int>> IdentityRoles { get; set; }
+        public virtual ICollection<IdentityAccountRole> IdentityRoles { get; set; }
 
         //Locations collection to add in the future...
     }

@@ -36,7 +36,7 @@ namespace Identity.Infrastructure.DataAccess
             _trackChangesManager = new TrackChangesManager(httpContextAccessor, dbContexts);
             _contextAccessor = new ContextAccessor(httpContextAccessor);
             ConstructDbContextDictionary(dbContexts);
-            ConstructDbContextIdentityManagers(dbContexts);
+            //ConstructDbContextIdentityManagers(dbContexts);
         }
 
 
@@ -74,19 +74,6 @@ namespace Identity.Infrastructure.DataAccess
 
         }
 
-        private void ConstructDbContextIdentityManagers(ICollection<BaseContext> dbContexts)
-        {
-            foreach (var context in dbContexts)
-            {
-                var um    = new UserStore<Account, IdentityRole<int>, BaseContext , int>(context) ; 
-                var um2 = new Microsoft.AspNetCore.Identity.UserManager<Account>(um , null , new PasswordHasher<Account>(), null, null , null , null, null, null);
-
-                var rm = new RoleStore<IdentityRole<int> , BaseContext, int>(context);
-                context.UserManager = um2;
-                context.RoleManager = new Microsoft.AspNetCore.Identity.RoleManager<IdentityRole<int>>(rm , null, null, null, null);
-            }
-
-        }
 
         public async void Dispose()
         {

@@ -13,6 +13,8 @@ namespace Identity.Domain.Repositories
         Task Add(string contextName, User account);
         void Delete(int? id);
 
-        Task<bool> AddAccount(string contextName, Account account, string password); 
+        Task<bool> AddAccount(string contextName, Account account, string password);
+        Task<Account> Login(string contextName, string email, string password);
+        Task<bool> ChangePassword(string contextName, string email, string oldPassword, string newPassowrd);
     }
 }

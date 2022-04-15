@@ -31,17 +31,16 @@ namespace Identity.WebAPI
 
             services.AddDbContexts(Configuration);
             services
-                .AddIdentity<Account, IdentityRole<int>>()
+                .AddIdentity<Account, IdentityAccountRole>()
                 .AddEntityFrameworkStores<Dev1Context>()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<Dev2Context>()
                 .AddDefaultTokenProviders();
 
-            WsManager.Instance.Init(Configuration);
+            //WsManager.Instance.Init(Configuration);
             services.AddAuthentication(_options =>
             {
                 _options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                _options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                _options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
                 .AddJwtBearer(options =>
                 {
@@ -49,8 +48,12 @@ namespace Identity.WebAPI
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
-                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidAudience = Configuration["JWT:ValidAudience"],
+                        ValidIssuer = Configuration["JWT:ValidIssuer"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+
                     };
                 }); ;
             services.AddContantsServices();
@@ -82,7 +85,7 @@ namespace Identity.WebAPI
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

@@ -18,22 +18,26 @@ namespace Identity.Core.DatabaseSeed
         public async static Task Initialize(IServiceProvider serviceProvider)
         {
             var contexts = serviceProvider.GetServices<BaseContext>();
-            ConstructDbContextIdentityManagers(contexts.ToList());
+            //ConstructDbContextIdentityManagers(contexts.ToList());
             var constantsFactory = serviceProvider.GetService<ConstantsFactory>();
 
             foreach (var context in contexts)
             {
-                var constantService = constantsFactory.GetConstantsService(context.ContextName);         
-
-                if (!context.Users.Any(u => u.Email == "zarref@pit.com"))
+                var constantService = constantsFactory.GetConstantsService(context.ContextName);
+                var user =  context.Users.FirstOrDefault(_account => _account.NormalizedEmail == "zarref@pit.com");
+                if (user == null)
                 {
                     Entities.Entities.Identity.Account account = new Entities.Entities.Identity.Account();
-                    account.IdentityRoles = new List<IdentityRole<int>>() { new IdentityRole<int>(GenericConstants.ApplicationRoles.Admin.ToString()) };
+
+                    account.IdentityRoles = new List<IdentityAccountRole>();
+                    foreach (var role in constantService.AppllicationAccountRoles)
+                        account.IdentityRoles.Add(new IdentityAccountRole(role));
                     account.Email = "zarref@pit.com";
                     account.ApplicationCode = context.ContextName;
                     account.PasswordHash = context.UserManager.PasswordHasher.HashPassword(account, "1234");
                     await context.UserManager.CreateAsync(account);
                     await context.SaveChangesAsync();
+
                 }
 
             }
@@ -41,19 +45,19 @@ namespace Identity.Core.DatabaseSeed
 
         }
 
-        private static void ConstructDbContextIdentityManagers(ICollection<BaseContext> dbContexts)
-        {
-            foreach (var context in dbContexts)
-            {
-                var um = new UserStore<Account, IdentityRole<int>, BaseContext, int>(context);
-                var um2 = new Microsoft.AspNetCore.Identity.UserManager<Account>(um, null, new PasswordHasher<Account>(), null, null, null, null, null, null);
+        //private static void ConstructDbContextIdentityManagers(ICollection<BaseContext> dbContexts)
+        //{
+        //    foreach (var context in dbContexts)
+        //    {
+        //        var um = new UserStore<Account, IdentityRole<int>, BaseContext, int>(context);
+        //        var um2 = new Microsoft.AspNetCore.Identity.UserManager<Account>(um, null, new PasswordHasher<Account>(), null, null, null, null, null, null);
 
-                var rm = new RoleStore<IdentityRole<int>, BaseContext, int>(context);
-                context.UserManager = um2;
-                context.RoleManager = new Microsoft.AspNetCore.Identity.RoleManager<IdentityRole<int>>(rm, null, null, null, null);
-            }
+        //        var rm = new RoleStore<IdentityRole<int>, BaseContext, int>(context);
+        //        context.UserManager = um2;
+        //        context.RoleManager = new Microsoft.AspNetCore.Identity.RoleManager<IdentityRole<int>>(rm, null, null, null, null);
+        //    }
 
-        }
+        //}
 
     }
 }

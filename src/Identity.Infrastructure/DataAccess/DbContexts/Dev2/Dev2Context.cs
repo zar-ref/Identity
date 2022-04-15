@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Identity.Entities.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System;
 using System.Collections.Generic;
@@ -13,6 +16,9 @@ namespace Identity.Infrastructure.DataAccess.DbContexts.Dev2
         public Dev2Context(DbContextOptions<Dev2Context> options) : base(options)
         {
             ContextName = "Dev2";
+            UserManager = new Microsoft.AspNetCore.Identity.UserManager<Account>(new UserStore<Account, IdentityRole<int>, BaseContext, int>(this), null, new PasswordHasher<Account>(), null, null, null, null, null, null);
+            var rm = new RoleStore<IdentityAccountRole, BaseContext, int>(this);
+            RoleManager = new Microsoft.AspNetCore.Identity.RoleManager<IdentityAccountRole>(rm, null, null, null, null);
         }
 
         

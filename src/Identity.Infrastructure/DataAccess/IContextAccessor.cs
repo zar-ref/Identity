@@ -10,5 +10,6 @@ namespace Identity.Infrastructure.DataAccess
     {
         string GetUser();
         int GetApplicationId();
+        string GetApplicationContextName();
     }
 }
