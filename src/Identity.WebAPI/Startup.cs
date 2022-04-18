@@ -7,9 +7,10 @@ using Identity.Infrastructure.DataAccess;
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
-using Identity.Infrastructure.WebSocket.Client; 
+using Identity.Infrastructure.WebSocket.Client;
 using Identity.WebAPI.Configurations;
 using Identity.WebAPI.Extensions;
+using Identity.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace Identity.WebAPI
         {
 
             services.AddDbContexts(Configuration);
+            services.AddCors();
             services
                 .AddIdentity<Account, IdentityAccountRole>()
                 .AddEntityFrameworkStores<Dev1Context>()
@@ -38,31 +40,31 @@ namespace Identity.WebAPI
                 .AddDefaultTokenProviders();
 
             //WsManager.Instance.Init(Configuration);
-            services.AddAuthentication(_options =>
-            {
-                _options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(options =>
-                {
-                    options.SaveToken = true;
-                    options.RequireHttpsMetadata = false;
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidAudience = Configuration["JWT:ValidAudience"],
-                        ValidIssuer = Configuration["JWT:ValidIssuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options =>
+            //       {
+            //           options.SaveToken = true;
+            //           options.RequireHttpsMetadata = false;
+            //           options.TokenValidationParameters = new TokenValidationParameters()
+            //           {
+            //               ValidateIssuer = true,
+            //               ValidateAudience = true, 
+            //               ValidateLifetime  = false,
+            //               //ValidateIssuerSigningKey = true,
+            //               ValidAudience = Configuration["JWT:ValidAudience"],
+            //               ValidIssuer = Configuration["JWT:ValidIssuer"],
+            //               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
 
-                    };
-                }); ;
+            //           };
+            //       }); ;
             services.AddContantsServices();
             services.AddServices();
             services.AddControllers();
-            services.AddAuthorization();
+            services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Identity", Version = "v1" });
+              
             });
         }
 
@@ -72,7 +74,7 @@ namespace Identity.WebAPI
             builder.RegisterModule(new DbContextsModule());
         }
 
-        public  async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -85,14 +87,20 @@ namespace Identity.WebAPI
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseCors(x => x
+                   .SetIsOriginAllowed(origin => true)
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials());
+
+
+            app.UseMiddleware<JwtMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
 
-           await IdentitySeed.Initialize(app.ApplicationServices); 
+            await IdentitySeed.Initialize(app.ApplicationServices);
         }
 
     }
