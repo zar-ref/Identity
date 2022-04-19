@@ -20,7 +20,7 @@ namespace Identity.Infrastructure.DataAccess
             return (string)_httpContextAccessor.HttpContext.Items["User"];
         }
 
-        public int GetApplicationId()
+        public int GetApplicationId() //is giving error on job dispose..
         {
             return (int)_httpContextAccessor.HttpContext.Items["ApplicationId"];
         }
