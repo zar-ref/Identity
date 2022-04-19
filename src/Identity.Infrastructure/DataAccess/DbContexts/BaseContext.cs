@@ -21,10 +21,11 @@ namespace Identity.Infrastructure.DataAccess.DbContexts
             base.OnModelCreating(builder);
         }
 
-        public  UserManager<Account> UserManager;
-        public  RoleManager<IdentityRole<int>> RoleManager;
+        public UserManager<Account> UserManager;
+        public RoleManager<IdentityAccountRole> RoleManager;
 
-        public Microsoft.EntityFrameworkCore.DbSet<User> Users { get; set; }
-        public Microsoft.EntityFrameworkCore.DbSet<UserRole> UserRoles { get; set; }
+        //public Microsoft.EntityFrameworkCore.DbSet<Account> Accounts { get; set; }
+        //public Microsoft.EntityFrameworkCore.DbSet<IdentityRole<int>> Accounts { get; set; }
+        //public Microsoft.EntityFrameworkCore.DbSet<IdentityAccountRole> Roles { get; set; }
     }
 }

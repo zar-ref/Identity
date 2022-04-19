@@ -41,7 +41,7 @@ namespace Identity.WebAPI.Extensions
         }
         public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration config)
         {
-
+           
             return services
                 .AddDbContext<Dev1Context>(options => options.UseSqlServer(config.GetValue<string>("DevelopmentConnectionStrings:dev_db_1")))
                 .AddDbContext<Dev2Context>(options => options.UseSqlServer(config.GetValue<string>("DevelopmentConnectionStrings:dev_db_2")))

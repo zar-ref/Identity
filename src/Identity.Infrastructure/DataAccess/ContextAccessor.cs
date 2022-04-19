@@ -25,6 +25,9 @@ namespace Identity.Infrastructure.DataAccess
             return (int)_httpContextAccessor.HttpContext.Items["ApplicationId"];
         }
 
-       
+        public string GetApplicationContextName()
+        {
+            return (string)_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(_claim => _claim.Type == "ApplicationId")?.Value ?? String.Empty;
+        }
     }
 }

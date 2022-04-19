@@ -6,7 +6,7 @@ using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
 using Identity.WebAPI;
 using Identity.WebAPI.Extensions;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore; 
 
 namespace Identity.WebAPI
 {
@@ -14,7 +14,9 @@ namespace Identity.WebAPI
     {
         public static void Main(string[] args)
         {
+       
             CreateHostBuilder(args).Build().Run();
+          
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

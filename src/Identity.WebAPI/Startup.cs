@@ -3,12 +3,14 @@ using Autofac.Extensions.DependencyInjection;
 using Identity.Core;
 using Identity.Core.DatabaseSeed;
 using Identity.Entities.Entities.Identity;
-using Identity.Infrastructure.DataAccess; 
+using Identity.Infrastructure.DataAccess;
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
+using Identity.Infrastructure.WebSocket.Client;
 using Identity.WebAPI.Configurations;
 using Identity.WebAPI.Extensions;
+using Identity.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,51 +27,55 @@ namespace Identity.WebAPI
 
         private IConfiguration Configuration { get; }
 
-        public void ConfigureServices (IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-       
+
             services.AddDbContexts(Configuration);
+            services.AddCors();
             services
-                .AddIdentity<Account, IdentityRole<int>>()
+                .AddIdentity<Account, IdentityAccountRole>()
                 .AddEntityFrameworkStores<Dev1Context>()
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<Dev2Context>()
                 .AddDefaultTokenProviders();
 
-            services.AddAuthentication(_options =>
-            {
-                _options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                _options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                _options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(options =>
-                {
-                    options.SaveToken = true;
-                    options.RequireHttpsMetadata = false;
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
-                    };
-                }); ;
+            //WsManager.Instance.Init(Configuration);
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options =>
+            //       {
+            //           options.SaveToken = true;
+            //           options.RequireHttpsMetadata = false;
+            //           options.TokenValidationParameters = new TokenValidationParameters()
+            //           {
+            //               ValidateIssuer = true,
+            //               ValidateAudience = true, 
+            //               ValidateLifetime  = false,
+            //               //ValidateIssuerSigningKey = true,
+            //               ValidAudience = Configuration["JWT:ValidAudience"],
+            //               ValidIssuer = Configuration["JWT:ValidIssuer"],
+            //               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+
+            //           };
+            //       }); ;
             services.AddContantsServices();
             services.AddServices();
             services.AddControllers();
-            services.AddAuthorization();
+            services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Identity", Version = "v1" });
+              
             });
-
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
-        { 
+        {
 
             builder.RegisterModule(new DbContextsModule());
         }
 
-        public  void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        { 
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
@@ -77,19 +83,24 @@ namespace Identity.WebAPI
 
             }
 
-            
+
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
-            app.UseAuthorization();
+            app.UseCors(x => x
+                   .SetIsOriginAllowed(origin => true)
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials());
+
+
+            app.UseMiddleware<JwtMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });            
+            });
 
-            IdentitySeed.Initialize(app.ApplicationServices);
-
+            await IdentitySeed.Initialize(app.ApplicationServices);
         }
 
     }
