@@ -18,5 +18,7 @@ namespace Identity.Infrastructure.DataAccess
         Task<int> Save(string contextName);
         int GetLastIdInsert();
         IUserRepository UserRepository { get; }
+
+        Task ManualDispose(string contextName); //To be used on jobs
     }
 }

@@ -9,6 +9,7 @@ using Identity.Infrastructure.DataAccess;
 using Identity.Infrastructure.DataAccess.DbContexts;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev1;
 using Identity.Infrastructure.DataAccess.DbContexts.Dev2;
+using Identity.WebAPI.Jobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,8 @@ namespace Identity.WebAPI.Extensions
         {
             return services
                 .AddScoped<IUserService, UserService>()
-                .AddScoped<IAccountService, AccountService>();
+                .AddScoped<IAccountService, AccountService>()
+                .AddScoped<ITestRecurringJob, TestRecurringJob>();
         }
         public static IServiceCollection AddContantsServices(this IServiceCollection services)
         {

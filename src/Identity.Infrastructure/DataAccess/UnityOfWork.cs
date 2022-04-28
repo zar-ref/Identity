@@ -29,6 +29,7 @@ namespace Identity.Infrastructure.DataAccess
             {-1 , "Dev1" },
         };
 
+        private bool _manuallyDisposing = false;
 
         public UnityOfWork(ICollection<BaseContext> dbContexts, IHttpContextAccessor httpContextAccessor)
         {
@@ -77,9 +78,21 @@ namespace Identity.Infrastructure.DataAccess
 
         public async void Dispose()
         {
+            if (_manuallyDisposing)
+            {
+                _manuallyDisposing = false;
+                return; 
+            }
             var contextName = ContextNamesByApplicationIdDictionary[_contextAccessor.GetApplicationId()];
             await _dbContexts.FirstOrDefault(_ctx => _ctx.ContextName == contextName).DisposeAsync().ConfigureAwait(false);
             GC.SuppressFinalize(this);
+        }
+
+        public async Task ManualDispose(string contextName)
+        {
+            await _dbContexts.FirstOrDefault(_ctx => _ctx.ContextName == contextName).DisposeAsync().ConfigureAwait(false);
+            GC.SuppressFinalize(this);
+            _manuallyDisposing = true;
         }
     }
 }

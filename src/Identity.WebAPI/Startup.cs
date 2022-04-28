@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Hangfire;
 using Identity.Core;
 using Identity.Core.DatabaseSeed;
 using Identity.Entities.Entities.Identity;
@@ -66,6 +67,13 @@ namespace Identity.WebAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Identity", Version = "v1" });
               
             });
+            services.AddSingleton<RecurringJobClientFilter>();
+           //services.BuildServiceProvider();
+            services.AddHangfire((provider, _hf) => _hf
+                .UseSqlServerStorage(Configuration["HangfireConnectionStrings:dev"])
+                .UseFilter(provider.GetRequiredService<RecurringJobClientFilter>()));
+            services.AddHangfireServer();
+
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
@@ -100,7 +108,12 @@ namespace Identity.WebAPI
                 endpoints.MapControllers();
             });
 
+            app.UseHangfireDashboard();
+
             await IdentitySeed.Initialize(app.ApplicationServices);
+
+            RecurringHangfireConfiguration.InitializeJobs(Configuration);
+
         }
 
     }
