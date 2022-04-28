@@ -11,10 +11,10 @@ namespace Identity.WebAPI.Jobs
             _unityOfWork = unityOfWork;
         }
 
-        public Task Execute(string contextName)
+        public async Task Execute(string contextName)
         {
-            _unityOfWork.UserRepository.Login(contextName, "zarref@pit.com", "1234");
-            return Task.CompletedTask;
+            await _unityOfWork.UserRepository.Login(contextName, "zarref@pit.com", "1234"); 
+            await _unityOfWork.ManualDispose(contextName);
         }
     }
 }
